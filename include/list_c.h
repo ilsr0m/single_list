@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <assert.h>
 
 /** @brief Структура одного узла односвязного линейного списка */
 typedef struct node_t node_t;

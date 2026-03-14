@@ -1,9 +1,6 @@
 #include "list_c.h"
 
-list_t* list_create(const size_t item_size)
-{
-	assert(item_size > 0);
-	
+list_t* list_create(const size_t item_size){
 	if(item_size == 0) return NULL;
 	
 	list_t* list = (list_t*)malloc(sizeof(list_t));
@@ -17,9 +14,8 @@ list_t* list_create(const size_t item_size)
 	return list;
 }
 
-void list_clear(list_t *list)
-{
-	assert(list != NULL);
+void list_clear(list_t *list){
+	if(list == NULL) return;
 	// прописать очистку итемов
 	node_t *cur = list->head;
 	while(cur != NULL){
@@ -33,9 +29,9 @@ void list_clear(list_t *list)
 	list->size = 0;
 }
 
-void list_delete(list_t **list)
-{
-	assert((*list) != NULL);
+void list_delete(list_t **list){
+	if (list == NULL) return;
+	if(*list == NULL) return;
 
 	// clean items
 	node_t *cur = (*list)->head;
@@ -51,10 +47,7 @@ void list_delete(list_t **list)
 	(*list) = NULL;
 }
 
-int list_append(list_t *list, const void *item)
-{
-	assert(list != NULL);
-	assert(item != NULL);
+int list_append(list_t *list, const void *item){
 	if(!list || !item) return -1;
 	// new node pointer
 	node_t* new_ptr = (node_t*)malloc(sizeof(node_t));
@@ -77,11 +70,7 @@ int list_append(list_t *list, const void *item)
 	return 0;
 }
 
-int list_prepend(list_t *list, const void *item)
-{
-	assert(list != NULL);
-	assert(item != NULL);
-
+int list_prepend(list_t *list, const void *item){
 	if(!list || !item) return -1;
 
 	node_t* new_ptr = (node_t*)malloc(sizeof(node_t));
@@ -92,13 +81,11 @@ int list_prepend(list_t *list, const void *item)
 	new_ptr->next = NULL;
 
 	// создаем список с нуля
-	if(list->head == NULL)
-	{
+	if(list->head == NULL){
 		list->head = new_ptr;
 	    list->tail = new_ptr;
 	}
-	else
-	{
+	else{
 		node_t *tmp = list->head;
 		list->head = new_ptr;
 		list->head->next = tmp;
@@ -108,13 +95,7 @@ int list_prepend(list_t *list, const void *item)
 	return 0;
 }
 
-int list_insert(list_t *list, const void *item, const size_t pos)
-{
-	// some stuff to prevent monkey coders from monkey code
-	assert(list != NULL);
-	assert(item != NULL);
-	assert(list->size >= pos);
-
+int list_insert(list_t *list, const void *item, const size_t pos){
 	if(!list || !item) return -1;
 	if(pos > list->size) return -1;
 
@@ -122,17 +103,13 @@ int list_insert(list_t *list, const void *item, const size_t pos)
 	node_t *cur = list->head;
 	node_t *prev = NULL;
 
-	while(cur != NULL)
-	{
-		if(count == pos)
-		{
-			if(cur == list->head)
-			{
+	while(cur != NULL){
+		if(count == pos){
+			if(cur == list->head){
 				list_prepend(list, item);
 				return 0;
 			}
-			else
-			{
+			else{
 				node_t* new_ptr = (node_t*)malloc(sizeof(node_t));
 				new_ptr->item = malloc( list->item_size);
 				memcpy(new_ptr->item, item, list->item_size);
@@ -147,43 +124,22 @@ int list_insert(list_t *list, const void *item, const size_t pos)
 		cur = cur->next;
 	}
 
-	if(pos == list->size)
-	{
+	if(pos == list->size){
 		list_append(list, item);
 		return 0;
 	}
 	return -1;
 }
 
-void* list_front(list_t *list)
-{
-	// some stuff to prevent monkey coders from monkey code
-	assert(list != NULL);
-	assert(list->size > 0);
-
-	if(list == NULL || list->size == 0) 
-		return NULL;
-	return list->head->item;
+void* list_front(list_t *list){
+	return (list == NULL || list->size == 0) ? NULL : list->head->item;
 }
 
-void* list_back(list_t *list)
-{
-	// some stuff to prevent monkey coders from monkey code
-	assert(list != NULL);
-	assert(list->size > 0);
-
-	if(list == NULL || list->size == 0) 
-		return NULL;	
-	return list->tail->item;
+void* list_back(list_t *list){
+	return (list == NULL || list->size == 0) ? NULL : list->tail->item;
 }
 
-void* list_remove(list_t *list, void* key, cmp_func_t cmp_func)
-{
-	// some stuff to prevent monkey coders from monkey code
-	assert(list != NULL);
-	assert(key != NULL);
-	assert(cmp_func != NULL);
-
+void* list_remove(list_t *list, void* key, cmp_func_t cmp_func){
 	if(!list || !key || !cmp_func) return NULL;
 
 	node_t* ptr = list->head;
@@ -192,15 +148,13 @@ void* list_remove(list_t *list, void* key, cmp_func_t cmp_func)
 	while(ptr != NULL){
 		next = ptr->next;
 		// check by comaprator
-		if(cmp_func(ptr->item, key) == 0)
-		{
+		if(cmp_func(ptr->item, key) == 0){
 			if(ptr == list->head){ // remove first
 				if(list->tail == list->head) // if only one item in list
 					list->head = list->tail = NULL;	
 				else list->head = next;
 			}
-			else if(ptr == list->tail) // remove last
-			{
+			else if(ptr == list->tail) { // remove last
 				list->tail = prev;
 				prev->next = NULL;
 			}
@@ -223,21 +177,14 @@ void* list_remove(list_t *list, void* key, cmp_func_t cmp_func)
 	return NULL;
 }
 
-int list_remove_all(list_t *list, void* key, cmp_func_t cmp_func)
-{
-	// some stuff to prevent monkey coders from monkey code
-	assert(list != NULL);
-	assert(key != NULL);
-	assert(cmp_func != NULL);
-
+int list_remove_all(list_t *list, void* key, cmp_func_t cmp_func){
 	if(!list || !key || !cmp_func) return -1;
 
 	int rem_count = 0;
 	node_t* ptr = list->head;
 	node_t* prev; node_t *next;
 
-	while(ptr != NULL)
-	{
+	while(ptr != NULL){
 		next = ptr->next;
 		// check by comaprator
 		if(cmp_func(ptr->item, key) == 0)
@@ -247,14 +194,13 @@ int list_remove_all(list_t *list, void* key, cmp_func_t cmp_func)
 					list->head = list->tail = NULL;
 				else list->head = next;
 			}
-			else if(ptr == list->tail) // remove last
-			{
+			else if(ptr == list->tail) { // remove last
 				list->tail = prev;
 				prev->next = NULL;
 			}
 			else prev->next = next; // remove in the middle
 			
-			free(ptr->item);
+			free(ptr->item); 
 			free(ptr);
 			list->size -= 1;
 			rem_count++;
@@ -268,12 +214,7 @@ int list_remove_all(list_t *list, void* key, cmp_func_t cmp_func)
 	return rem_count;
 }
 
-void* list_pop_front(list_t *list)
-{
-	// some stuff to prevent monkey coders from monkey code
-	assert(list != NULL);
-	assert(list->size > 0);
-
+void* list_pop_front(list_t *list){
 	if(!list) return NULL;
 	if(list->size == 0) return NULL;
 
@@ -295,22 +236,15 @@ void* list_pop_front(list_t *list)
 	return item;
 }
 
-void* list_pop_back(list_t *list)
-{
-	// some stuff against monkey coders
-	assert(list != NULL);
-	assert(list->size > 0);
-
+void* list_pop_back(list_t *list){
 	if(!list) return NULL;
 	if(list->size == 0) return NULL;
 
 	node_t *cur = list->head;
 	node_t *prev = NULL;
 
-	while(cur)
-	{
-		if(cur == list->tail)
-		{
+	while(cur){
+		if(cur == list->tail){
 			if(list->head == list->tail){ // if only one item
 				list->head = list->tail = NULL;
 
@@ -334,6 +268,5 @@ void* list_pop_back(list_t *list)
 		prev = cur;
 		cur = cur->next;
 	}
-
 	return NULL;
 }
