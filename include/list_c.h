@@ -1,5 +1,5 @@
 #ifndef LIST_C_H
-#define LSIT_C_H
+#define LIST_C_H
 
 #include <stdio.h>
 #include <stdlib.h>
