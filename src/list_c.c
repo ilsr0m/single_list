@@ -30,8 +30,6 @@ void list_clear(list_t *list)
 	}
 	list->head = NULL;
 	list->tail = NULL;
-
-	list->item_size = 0;
 	list->size = 0;
 }
 

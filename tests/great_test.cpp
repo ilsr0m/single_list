@@ -146,7 +146,7 @@ TEST(ListTest, ClearTest){
     EXPECT_EQ(list->head, nullptr); 
     EXPECT_EQ(list->tail, nullptr);
     EXPECT_EQ(list->size, 0); 
-    EXPECT_EQ(list->item_size, 0); 
+    EXPECT_EQ(list->item_size, sizeof(double)); 
 
     list_delete(&list);
     EXPECT_EQ(list, nullptr);
