@@ -278,8 +278,13 @@ void* list_pop_front(list_t *list)
 	if(list->size == 0) return NULL;
 
 	node_t *ptr = list->head;
-	node_t *next = ptr->next;
-	list->head = next;
+
+	if(list->head == list->tail) // if only one item	
+		list->head = list->tail = NULL;
+	else{
+		node_t *next = ptr->next;
+		list->head = next;
+	}
 
 	void* item = malloc(list->item_size);
 	memcpy(item, ptr->item, list->item_size);
@@ -306,13 +311,16 @@ void* list_pop_back(list_t *list)
 	{
 		if(cur == list->tail)
 		{
-			list->tail = prev;
+			if(list->head == list->tail){ // if only one item
+				list->head = list->tail = NULL;
 
-			// cut node connection with tail
-			// prev is new tail node
-			if(prev)
-				prev->next = NULL;
-
+			}
+			else{
+				list->tail = prev;
+				// cut node connection with tail
+				if(prev) prev->next = NULL; // prev is new tail node
+			}
+			
 			void* item = malloc(list->item_size);
 			memcpy(item, cur->item, list->item_size);
 
@@ -320,7 +328,6 @@ void* list_pop_back(list_t *list)
 			free(cur);
 
 			list->size -= 1;
-
 			return item;
 		}
 
