@@ -11,7 +11,7 @@ typedef struct node_t node_t;
 
 /** @brief Структура одного узла односвязного линейного списка */
 struct node_t{
-	void *item; ///< Указатель на данные
+	void* item; ///< Указатель на данные
 	node_t* next; ///< Указатель на следующий по счету узел
 };
 
@@ -34,7 +34,7 @@ typedef  int (*cmp_func_t)(const void *_item, const void *_key);
 /**
  * @brief Функция-предикат, предаваемая в качестве аргумента
  * @param[in] _item Указатель на элемент
- * @param[in] _ctx Указатель на контекст
+ * @param[in] _context Указатель на контекст
  * @return Результат сравнения с контекстом: 0 - прошел, остальное - не прошел
  */
 typedef int (*predicate_fn)(const void* _item, void* _context);
@@ -77,10 +77,11 @@ int list_prepend(list_t *list, const void *item);
 /**
  * @brief Функция вставляет элемент списка в указанную позицию
  * @param[out] list Указатель на список
- * @param[in] list Номер нового элемента в списке
+ * @param[in] item Указатель на вставляемый элемент
+ * @param[in] position Номер нового элемента в списке
  * @return Статус
  */
-int list_insert(list_t *list, const void *item, const size_t pos);
+int list_insert(list_t *list, const void *item, const size_t position);
 
 /**
  * @brief Функция возвращает первый элемент списка
