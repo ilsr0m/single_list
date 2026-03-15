@@ -321,3 +321,20 @@ list_t *list_copy(const list_t *list){
 	}
 	return copy;
 }
+
+int list_contains(const list_t *list, const void* item, cmp_func_t cmp)
+{
+	if(!list || !item || !cmp) return -1;
+	if(!list->item_size) return -1;
+
+	size_t count = 0;
+	if(list->list_size) {
+		node_t *cur = list->head;
+		while(cur != NULL) {
+			if(cmp(cur->item, item) == 0)
+			count++;
+			cur = cur->next;
+		}
+	}
+	return count;
+}

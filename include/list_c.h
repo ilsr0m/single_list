@@ -141,4 +141,13 @@ void* list_at(const list_t *list, const size_t index);
  */
 list_t *list_copy(const list_t *list);
 
+/**
+ * @brief Проверка наличия соответствующего элемента в списке
+ * @param[in] list Указатель на список
+ * @param[in] index Указатель на элемент
+ * @return Результат поиска: 0 - найден, 1 - не найден.
+ * Если list - NULL или item == 0, то функция вернет -1
+ */
+int list_contains(const list_t *list, const void* item, cmp_func_t cmp);
+
 #endif

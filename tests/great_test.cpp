@@ -69,7 +69,7 @@ protected:
     }
 
     // this comparator is needed as arg in list_remove and list_remove_all
-    static int RemoveCmp(const void* _item, const void* _key) {
+    static int Comparator(const void* _item, const void* _key) {
         return (*(int*)_item == *(int*)_key) ? 0 : -1;
     }
 };
@@ -268,7 +268,7 @@ TEST_F(ListTest, RemoveOnceTest){
     // Test 0 - only one item in list
     int once = 4;
     list_append(list, &once);
-    removed_item = list_remove(list, &once, ListTest::RemoveCmp);
+    removed_item = list_remove(list, &once, ListTest::Comparator);
     EXPECT_EQ(*(int*)removed_item, once);
     IsEmpty();
 
@@ -276,7 +276,7 @@ TEST_F(ListTest, RemoveOnceTest){
     
     // Test 1 - Remove head item
     int head_key = 9; // remove 9 value
-    removed_item = list_remove(list, &head_key, ListTest::RemoveCmp);
+    removed_item = list_remove(list, &head_key, ListTest::Comparator);
     EXPECT_NE(list, nullptr);
     EXPECT_EQ(*(int*)removed_item, head_key);
     EXPECT_EQ(list->list_size, 9);
@@ -291,7 +291,7 @@ TEST_F(ListTest, RemoveOnceTest){
 
     // Test 2 - Remove tail item
     int tail_key = 1; // remove 1 value
-    removed_item = list_remove(list, &tail_key, ListTest::RemoveCmp);
+    removed_item = list_remove(list, &tail_key, ListTest::Comparator);
     EXPECT_NE(list, nullptr);
     EXPECT_EQ(*(int*)removed_item, tail_key);
     EXPECT_EQ(list->list_size, 8);
@@ -306,7 +306,7 @@ TEST_F(ListTest, RemoveOnceTest){
 
     // Test 3 - Remove middle item
     int middle_key = 0; // remove 0 value
-    removed_item = list_remove(list, &middle_key, ListTest::RemoveCmp);
+    removed_item = list_remove(list, &middle_key, ListTest::Comparator);
     EXPECT_NE(list, nullptr);
     EXPECT_EQ(*(int*)removed_item, middle_key);
     EXPECT_EQ(list->list_size, 7);
@@ -321,7 +321,7 @@ TEST_F(ListTest, RemoveOnceTest){
 
     // Test 4 - Remove value 5 (it must remove only first item with such value)
     int duplicate_key = 5;
-    removed_item = list_remove(list, &duplicate_key, ListTest::RemoveCmp);
+    removed_item = list_remove(list, &duplicate_key, ListTest::Comparator);
     EXPECT_NE(list, nullptr);
     EXPECT_EQ(*(int*)removed_item, duplicate_key);
     EXPECT_EQ(list->list_size, 6);
@@ -336,7 +336,7 @@ TEST_F(ListTest, RemoveOnceTest){
 
     // Test 5 - Try to remove value which the list does not have
     int fake_key = 228;
-    removed_item = list_remove(list, &fake_key, ListTest::RemoveCmp);
+    removed_item = list_remove(list, &fake_key, ListTest::Comparator);
     EXPECT_NE(list, nullptr);
     EXPECT_EQ(removed_item, nullptr);
     EXPECT_EQ(list->list_size, 6);
@@ -366,7 +366,7 @@ TEST_F(ListTest, RemoveAllTest){
     // Test 0 - only one item in list
     int once = 4;
     list_append(list, &once);
-    removed_items_count = list_remove_all(list, &once, ListTest::RemoveCmp);
+    removed_items_count = list_remove_all(list, &once, ListTest::Comparator);
     EXPECT_EQ(removed_items_count, 1);
     IsEmpty();
 
@@ -375,7 +375,7 @@ TEST_F(ListTest, RemoveAllTest){
     
     // Test 1 - Remove head item
     int head_key = 9; // remove 9 value
-    removed_items_count = list_remove_all(list, &head_key, ListTest::RemoveCmp);
+    removed_items_count = list_remove_all(list, &head_key, ListTest::Comparator);
     EXPECT_NE(list, nullptr);
     EXPECT_EQ(removed_items_count, 1);
     EXPECT_EQ(list->list_size, 9);
@@ -390,7 +390,7 @@ TEST_F(ListTest, RemoveAllTest){
 
     // Test 2 - Remove tail item
     int tail_key = 1; // remove 1 value
-    removed_items_count = list_remove_all(list, &tail_key, ListTest::RemoveCmp);
+    removed_items_count = list_remove_all(list, &tail_key, ListTest::Comparator);
     EXPECT_NE(list, nullptr);
     EXPECT_EQ(removed_items_count, 1);
     EXPECT_EQ(list->list_size, 8);
@@ -405,7 +405,7 @@ TEST_F(ListTest, RemoveAllTest){
 
     // Test 3 - Remove middle item
     int middle_key = 0; // remove 0 value
-    removed_items_count = list_remove_all(list, &middle_key, ListTest::RemoveCmp);
+    removed_items_count = list_remove_all(list, &middle_key, ListTest::Comparator);
     EXPECT_NE(list, nullptr);
     EXPECT_EQ(removed_items_count, 1);
     EXPECT_EQ(list->list_size, 7);
@@ -428,7 +428,7 @@ TEST_F(ListTest, RemoveAllTest){
     list_prepend(list, &duplicate_key);
     list_insert(list, &duplicate_key, 4);
     // start removing all fives
-    removed_items_count = list_remove_all(list, &duplicate_key, ListTest::RemoveCmp);
+    removed_items_count = list_remove_all(list, &duplicate_key, ListTest::Comparator);
     EXPECT_NE(list, nullptr);
     EXPECT_EQ(removed_items_count, 8);
     EXPECT_EQ(list->list_size, 5);
@@ -443,7 +443,7 @@ TEST_F(ListTest, RemoveAllTest){
 
     // Test 5 - Try to remove value which the list does not have
     int fake_key = 228;
-    removed_items_count = list_remove_all(list, &fake_key, ListTest::RemoveCmp);
+    removed_items_count = list_remove_all(list, &fake_key, ListTest::Comparator);
     EXPECT_NE(list, nullptr);
     EXPECT_EQ(removed_items_count, 0);
     EXPECT_EQ(list->list_size, 5);
@@ -593,6 +593,69 @@ TEST_F(ListTest, CopyTest){
 
     Clear();
 }
+
+TEST_F(ListTest, ContainsTest){
+    int result;
+    int v1 = 0, v2 = 5, v3 = 170;
+
+    // if any argument is null: -1
+    result = list_contains(nullptr, &v1, Comparator);
+    EXPECT_EQ(result, -1);
+    result = list_contains(list, nullptr, Comparator);
+    EXPECT_EQ(result, -1);
+    result = list_contains(list, &v1, nullptr);
+    EXPECT_EQ(result, -1);
+    result = list_contains(nullptr, nullptr, Comparator);
+    EXPECT_EQ(result, -1);
+    result = list_contains(nullptr, &v1, nullptr);
+    EXPECT_EQ(result, -1);
+    result = list_contains(list, nullptr, nullptr);
+    EXPECT_EQ(result, -1);
+    result = list_contains(nullptr, nullptr, nullptr);
+    EXPECT_EQ(result, -1);
+
+    // if list is empty: 0
+    IsEmpty();
+    result = list_contains(list, &v1, Comparator);
+    EXPECT_EQ(result, 0);
+
+    // if list has one item
+    list_append(list, &v1);
+    result = list_contains(list, &v2, Comparator); // invalid item: 0 
+    EXPECT_EQ(result, 0);
+    IsNotEmpty();
+    result = list_contains(list, &v1, Comparator); // valid item: 1
+    EXPECT_EQ(result, 1);
+    IsNotEmpty();
+    Clear();
+    
+    // if has multiple items
+    FillList(list_append);
+    result = list_contains(list, &v3, Comparator); // invalid item: 0 
+    EXPECT_EQ(result, 0);
+    IsNotEmpty();
+    result = list_contains(list, &v1, Comparator); // if valid single item: 1
+    EXPECT_EQ(result, 1);
+    IsNotEmpty();
+
+    // if valid multiple item: > 1
+    result = list_contains(list, &v2, Comparator); // result: 2
+    EXPECT_EQ(result, 2);
+    IsNotEmpty();
+
+    list_append(list, &v2);
+    result = list_contains(list, &v2, Comparator); // result: 3
+    EXPECT_EQ(result, 3);
+    IsNotEmpty();
+
+    list_append(list, &v2);
+    list_append(list, &v2);
+    result = list_contains(list, &v2, Comparator); // result: 5
+    EXPECT_EQ(result, 5);
+    IsNotEmpty();
+
+    Clear();
+}   
 
 int main(int argc, char **argv){
     ::testing::InitGoogleTest(&argc, argv);
