@@ -1,4 +1,6 @@
 #include <gtest/gtest.h>
+#include <vector>
+#include <tuple>
 
 extern "C"{
     #include "list_c.h"
@@ -10,6 +12,8 @@ protected:
 
     int testValues[10] = {9, 2, -1, 5, 7, 0, 4, 5, 3, 1};
     int testValuesSorted[10] = {-1, 0, 1, 2, 3, 4, 5, 5, 7, 9};
+
+    std::vector<int> test_data = {9, 2, -1, 5, 7, 0, 4, 5, 3, 1};
 
     void SetUp() { 
         list = list_create(sizeof(int)); 
@@ -59,13 +63,24 @@ protected:
     }
 
     void FillList(int (*add)(list_t* list, const void* data)){
+        Clear();
         int result;
         for(int i = 0; i < 10; i++){
-            result = add(list, &testValues[i]);
+            result = add(list, &test_data[i]);
             EXPECT_EQ(result, 0);
         }
         IsNotEmpty();
         EXPECT_EQ(list->list_size, 10);
+    }
+
+    void TestData(std::vector<int> test_values){
+        node_t* current_node = list->head;
+        int count = 0;
+        while(current_node){
+            EXPECT_EQ(*(int*)current_node->item, test_values[count]);
+            current_node = current_node->next;
+            count++;
+        }
     }
 
     // this comparator is needed as arg in list_remove and list_remove_all
@@ -766,6 +781,121 @@ TEST_F(ListTest, TrimFrontTest){
     for(int i = 2; i < 7; i++)
         EXPECT_EQ(*(int*)list_at(list, i - 2), valid_values[i]);
     
+    Clear();
+}
+
+TEST_F(ListTest, TrimBackTest){
+    int result;
+    int valid_values[7] = {9, 2, -1, 5, 7, 0, 4};
+    int count;
+    node_t* current_node;
+    // if list is null
+    result = list_trim_back(nullptr, 2); // -1
+    EXPECT_EQ(result, -1);
+    // empty list
+    IsEmpty();
+    result = list_trim_back(list, 0); // 0
+    EXPECT_EQ(result, 0);
+    IsEmpty();
+    result = list_trim_back(list, 1); // -1
+    EXPECT_EQ(result, -1);
+
+    FillList(list_append);
+    // if n = 0
+    result = list_trim_back(list, 0); // 0
+    EXPECT_EQ(result, 0);
+    // if n gt list_size
+    result = list_trim_back(list, 15); // -1
+    EXPECT_EQ(result, -1);
+
+    // valid trim twice 
+    result = list_trim_back(list, 3); // 3
+    IsNotEmpty();
+    EXPECT_EQ(result, 3);
+    EXPECT_EQ(list->list_size, 7);
+
+    current_node = list->head;
+    count = 0;
+    while(current_node){
+        EXPECT_EQ(*(int*)current_node->item, valid_values[count]);
+        current_node = current_node->next;
+        count++;
+    }
+    EXPECT_EQ(count, 7);
+
+    result = list_trim_back(list, 2); // 3
+    IsNotEmpty();
+    EXPECT_EQ(result, 2);
+    EXPECT_EQ(list->list_size, 5);
+    
+    current_node = list->head;
+    count = 0;
+    while(current_node){
+        EXPECT_EQ(*(int*)current_node->item, valid_values[count]);
+        current_node = current_node->next;
+        count++;
+    }
+    EXPECT_EQ(count, 5);
+
+    Clear();
+}
+
+TEST_F(ListTest, TrimRangeTest){
+    int result;
+
+    // if list is null
+    result = list_trim_range(nullptr, 2, 5); // -1
+    EXPECT_EQ(result, -1);
+
+    // empty list
+    IsEmpty();
+    result = list_trim_range(list, 0, 0); // 0
+    EXPECT_EQ(result, 0);
+
+    IsEmpty();
+    result = list_trim_range(list, 5, 1); // -1
+    EXPECT_EQ(result, -1);
+
+    FillList(list_append);
+    result = list_trim_range(list, 4, 4); // 0
+    EXPECT_EQ(result, 0);
+    result = list_trim_range(list, 1, 0); // 0
+    EXPECT_EQ(result, -1);
+    result = list_trim_range(list, 5, 3); // 0
+    EXPECT_EQ(result, -1);
+    // if n gt list_size
+    result = list_trim_range(list, 2, 15); // -1
+    EXPECT_EQ(result, -1);
+
+    // remove full list
+    FillList(list_append);
+    result = list_trim_range(list, 0, list->list_size);
+    EXPECT_EQ(result, 10);
+    IsEmpty();
+
+    // data = {9, 2, -1, 5, 7, 0, 4, 5, 3, 1}
+    std::vector<std::tuple<int, int, int, int, std::vector<int>>> test_input = {  
+        {0, 1, 1, 9, {2, -1, 5, 7, 0, 4, 5, 3, 1}},     // trime range (0, 1) - only one item
+        {0, 5, 5, 5, {0, 4, 5, 3, 1}},                  // trim range (0, end) - multiple items
+        {0, 9, 9, 1, {1}},                              // trim all items
+        {6, 7, 1, 9, {9, 2, -1, 5, 7, 0, 5, 3, 1}},     // trim only one item in the middle
+        {3, 4, 1, 9, {9, 2, -1, 7, 0, 4, 5, 3, 1}},     // trim only one item in the middle
+        {2, 6, 4, 6, {9, 2, 4, 5, 3, 1}},               // trim multiple in the middle
+        {5, 8, 3, 7, {9, 2, -1, 5, 7, 3, 1}},           // trim multiple in the middle
+        {9, 10, 1, 9, {9, 2, -1, 5, 7, 0, 4, 5, 3}},    // trim only last item
+        {5, 10, 5, 5, {9, 2, -1, 5, 7}},                // trim multiple last items
+        {3, 10, 7, 3, {9, 2, -1}}                       // trim multiple last items
+    };
+    
+    for(int i = 0; i < test_input.size(); i++) {
+        FillList(list_append);
+        result = list_trim_range(list, std::get<0>(test_input[i]), std::get<1>(test_input[i]));
+        IsNotEmpty();
+        EXPECT_EQ(result, std::get<2>(test_input[i]));
+        EXPECT_EQ(list->list_size, std::get<3>(test_input[i]));
+        TestData(std::get<4>(test_input[i]));
+    }
+
     Clear();
 }
 

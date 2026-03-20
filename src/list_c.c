@@ -410,36 +410,48 @@ int list_trim_range(list_t *list, const size_t start, const size_t end) {
 	if(start > end || end > list->list_size) return -1;
 	if(start == end) return 0;
 
+	if(start == 0 && end == list->list_size){
+		list_clear(list);
+		return end;
+	}
 	if(start == 0)
 		return list_trim_front(list, end);
-	if(end == list->list_size)
-		return list_trim_back(list, end - start);
 
-	int i;
 	int count = 0;
-	node_t *cur = list->head->next;
-	node_t *prev = list->head, *next = cur->next;
-	node_t *left = NULL, *right = NULL;
 
-	for(i = 1; i < end - 1; i++) {
-		if(left == NULL) {
-			if(i == start) left = prev;
-			prev = cur;
+	// we must find left_node and right_node
+	node_t* left_node = NULL;
+	node_t* right_node = NULL;
+	node_t* current_node = list->head;
+	// node_t* previous_node = NULL;
+
+	while(current_node){
+		if(count == end){
+			right_node = current_node;
+			break;
 		}
-		if(left != NULL) {
-			free(cur->item);
-			free(cur);
-			count++;
+
+		if(left_node){
+			// remove item
+			free(current_node->item);
+			free(current_node);
 		}
-		cur = next;
-		next = next->next;
+		else if(count == start - 1)
+			left_node = current_node;
+
+		count++;
+		// previous_node = current_node;
+		current_node = current_node->next;
+	}
+
+	if(right_node)
+		left_node->next = right_node;
+	else{
+		// looks like end is equal to list->size
+		left_node->next = NULL;
+		list->tail = left_node;
 	}
 
 	list->list_size -= (end - start);
-	right = next;
-	// bind left and right nodes
-//	if(left != NULL && right != NULL){
-	left->next = right;
-	return count;
-//	}
+	return end - start;
 }
