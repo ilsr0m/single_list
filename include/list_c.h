@@ -6,191 +6,234 @@
 #include <unistd.h>
 #include <string.h>
 
-/** @brief Структура одного узла односвязного линейного списка */
-typedef struct node_t node_t;
-
-/** @brief Структура одного узла односвязного линейного списка */
-struct node_t{
-	void* item; ///< Указатель на данные
-	node_t* next; ///< Указатель на следующий по счету узел
-};
-
-/** @brief Структура односвязного линейного списка */
-typedef struct{
-	size_t list_size; ///< Количество элементов списка
-	size_t item_size; ///< Размер выделенной памяти для каждого элемента
-	node_t* head; ///< Указатель на первый узел списка
-	node_t* tail; ///< Указатель на последний элемент списка
-}list_t;
+typedef struct node node_t;
+typedef struct list list_t;
 
 /**
  * @brief Функция-компаратор, предаваемая в качестве аргумента
- * @param[in] _item Указатель на сравниваемый элемент
- * @param[in] _key Указатель на ключ
- * @return Результат сравнения: 0 - прошел, остальное - не прошел
+ * @param[in] _item Pointer to the item
+ * @param[in] _key Pointer to the key
+ * @return 0 - success
+ * @return 1 - fail
  */
 typedef  int (*cmp_func_t)(const void *_item, const void *_key);
 
 /**
  * @brief Функция-предикат, предаваемая в качестве аргумента
- * @param[in] _item Указатель на элемент
- * @param[in] _context Указатель на контекст
- * @return Результат сравнения с контекстом: 0 - прошел, остальное - не прошел
+ * @param[in] _item Pointer to the item
+ * @param[in] _context Pointer to the context
+ * @return Результат сравнения с контекстом:
+ * @return 0 - success
+ * @return 1 - fail
  */
 typedef int (*predicate_fn)(const void* _item, void* _context);
+
+/*---------------- C-like getters ----------------*/
+/**
+ * @brief Returns size of one-way linked list
+ * @param[in] lst Pointer to the list
+ * @return List's size
+ */
+size_t list_size(const list_t *lst);
+
+/**
+ * @brief Returns item size of one-way linked list
+ * @param[in] lst Pointer to the list
+ * @return Item's size
+ */
+size_t list_item_size(const list_t *lst);
+
+node_t* list_head(const list_t *lst);
+node_t* list_tail(const list_t *lst);
+
+node_t *node_next(const node_t *nod);
+void* node_data(const node_t *nod);
+
+/**
+ * @brief Функция возвращает первый элемент списка
+ * @param[out] lst Pointer to the list
+ * @return Указатель на первый элемент списка
+ */
+void* list_front_item(const list_t *lst);
+
+/**
+ * @brief Функция возвращает последний элемент списка
+ * @param[out] lst Pointer to the list
+ * @return Указатель на последний элемент списка
+ */
+void* list_back_item(const list_t *lst);
+
+/**
+ * @brief Получение указателя на элемент списка по заданому индексу
+ * @param[in] lst Pointer to the list
+ * @param[in] index Индекс узла
+ * @return Указатель на узел, соответствующий размещению в списке по аргументу index.
+ */
+void* list_at(const list_t *lst, const size_t index);
+/*------------------------------------------------*/
 
 /**
  * @brief Функция создания односвязного линейного списка
  * @param[in] item_size Размер выделенной памяти для каждого элемента
- * @return Указатель на список
+ * @return Pointer to the list
  */
 list_t* list_create(const size_t item_size);
 
 /**
  * @brief Функция очистки односвязного списка
- * @param[in] list Указатель на список
+ * @param[in] lst Pointer to the list
  */
-void list_clear(list_t *list);
+void list_clear(list_t *lst);
 
 /**
  * @brief Функция удаления всего односвязного линейного списка
- * @param[out] list Указатель на список
+ * @param[out] lst Pointer to the list
  */
-void list_delete(list_t **list);
+void list_delete(list_t **lst);
+
+int list_empty(const list_t *lst);
+int list_set(list_t *lst, size_t index, void* item);
 
 /**
  * @brief Функция добавления нового элемента в конец односвязного линейного списка
- * @param[out] list Указатель на список
+ * @param[out] lst Pointer to the list
  * @param[in] item Указатель на элемент списка
  * @return Статус
  */
-int list_append(list_t *list, const void *item);
+int list_append(list_t *lst, const void *item);
 
 /**
  * @brief Функция добавления нового элемента в начало односвязного линейного списка
- * @param[out] list Указатель на список
+ * @param[out] lst Pointer to the list
  * @param[in] item Указатель на элемент списка
  * @return Статус
  */
-int list_prepend(list_t *list, const void *item);
+int list_prepend(list_t *lst, const void *item);
 
 /**
  * @brief Функция вставляет элемент списка в указанную позицию
- * @param[out] list Указатель на список
+ * @param[out] lst Pointer to the list
  * @param[in] item Указатель на вставляемый элемент
  * @param[in] position Номер нового элемента в списке
  * @return Статус
  */
-int list_insert(list_t *list, const void *item, const size_t position);
-
-/**
- * @brief Функция возвращает первый элемент списка
- * @param[out] list Указатель на список
- * @return Указатель на первый элемент списка
- */
-void* list_front(list_t *list);
-
-/**
- * @brief Функция возвращает последний элемент списка
- * @param[out] list Указатель на список
- * @return Указатель на последний элемент списка
- */
-void* list_back(list_t *list);
+int list_insert(list_t *lst, const void *item, const size_t position);
 
 /**
  * @brief Функция удаления первого соответстующего элементов односвязного линейного списка
- * @param[out] list Указатель на список
+ * @param[out] lst Pointer to the list
  * @param[in] key Ключ сравнения, передаваемый в компаратор в качестве аргумента
  * @param[in] comparator Компаратор, сравнивающий ключ и текущий элемент списка. Если результат сравнения - 0, то узел будет удален
  * @return Количество удаленных элементов
  */
-void* list_remove(list_t *list, void* key, cmp_func_t comparator); 
+int list_remove(list_t *lst, void* key, cmp_func_t comparator); 
+
+/**
+ * @brief Remove item at set position in single-linked list
+ * @param[out] lst Pointer to the list
+ * @param[in] position Item's position
+ * @return Function's result: -1 - fail, 1 - success, 
+ */
+int list_remove_at(list_t *lst, size_t position);
 
 /**
  * @brief Функция удаления всех соответстующих элементов односвязного линейного списка
- * @param[out] list Указатель на список
+ * @param[out] lst Pointer to the list
  * @param[in] key Ключ сравнения, передаваемый в компаратор в качестве аргумента
  * @param[in] comparator Компаратор, сравнивающий ключ и текущий элемент списка. Если результат сравнения - 0, то узел будет удален
  * @return Количество удаленных элементов
  */
-int list_remove_all(list_t *list, void* key, cmp_func_t comparator); 
+int list_remove_all(list_t *lst, void* key, cmp_func_t comparator); 
 
 /**
  * @brief Функция удаления первого узла списка
- * @param[out] list Указатель на список
+ * @param[out] lst Pointer to the list
  */
-void* list_pop_front(list_t *list);
+void* list_pop_front(list_t *lst);
 
 /**
  * @brief Функция удаления последнего узла списка
- * @param[out] list Указатель на список
+ * @param[out] lst Pointer to the list
  */
-void* list_pop_back(list_t *list); 
-
-/**
- * @brief Получение указателя на элемент списка по заданому индексу
- * @param[in] list Указатель на список
- * @param[in] index Индекс узла
- * @return Указатель на узел, соответствующий размещению в списке по аргументу index.
- */
-void* list_at(const list_t *list, const size_t index);
+void* list_pop_back(list_t *lst); 
 
 /**
  * @brief Формирование копии списка, указатель которого передается в аргумент
- * @param[in] list Указатель на список
+ * @param[in] lst Pointer to the list
  * @return Указатель на копию списка
  */
-list_t *list_copy(const list_t *list);
-
-/**
- * @brief Проверка наличия соответствующего элемента в списке
- * @param[in] list Указатель на список
- * @param[in] key Указатель на ключ
- * @param[in] comparator Компаратор, сравнивающий ключ и текущий элемент списка. Если результат сравнения - 0, то узел будет удален
- * @return Результат поиска: 0 - найден, 1 - не найден.
- * Если list - NULL или item == 0, то функция вернет -1
- */
-int list_contains(const list_t *list, const void *key, cmp_func_t comparator);
-
-/**
- * @brief Формирование нового односвязного линейного списка на основе старого с фильрацией данных по предикату
- * @param[in] list Указатель на список
- * @param[in] predicate Предикат, по которому сравниваются данные каждого узла. Если резльтат - 0, то данные удовлетворяют условиям
- * @param[in] context Указатель на контекст предиката. Т. е. с чем сранвивать данные узла. Передается потом в качестве аргумента в предикат
- * @return Указатель на новый односвязный линейный список. Если list - NULL, то функция вернет NULL
- */
-list_t* list_filter(const list_t *list, void *context, predicate_fn predicate);
+list_t *list_copy(const list_t *lst);
 
 /**
  * @brief Функция удаления n-го количества элементов с начала односвязного линейного списка
- * @param[out] list Указатель на список
+ * @param[out] lst Pointer to the list
  * @param[in] n Количество удаляемых элементов
  * @return Количество удаленных элементов
  */
-int list_trim_front(list_t *list, const size_t n); // +
+int list_trim_front(list_t *lst, const size_t n); // +
 
 /**
  * @brief Функция удаления n-го количества элементов с конца односвязного линейного списка
- * @param[out] list Указатель на список
+ * @param[out] lst Pointer to the list
  * @param[in] n Количество удаляемых элементов
  * @return Количество удаленных элементов
  */
-int list_trim_back(list_t *list, const size_t n); // +
+int list_trim_back(list_t *lst, const size_t n); // +
 
 /**
- * @brief Функция удаления n-го количества элементов в указанном диапазоне [start; end)
- * @param[out] list Указатель на список
- * @param[in] start Индекс начального элемента (включительно)
- * @param[in] end Индекс конечного элемента
- * @return Количество удаленных элементов
+ * @brief 
+ * @param[out] lst Pointer to the list
+ * @param[in] start 
+ * @param[in] end 
+ * @return 
  */
 int list_trim_range(list_t *list, const size_t start, const size_t end);
 
 /**
- * @brief Функция возвращает размер списка - количество элементов в односвязном списке
- * @param[in] lst Указатель на список
- * @return Количество элементов списка
+ * @brief 
+ * @param[out] lst_destination 
+ * @param[in] lst_source
+ * @return 
  */
-size_t list_size(const list_t *lst);
+int list_concat(list_t *lst_destination, const list_t *lst_source); // копия lst_source
+
+
+int list_splice(list_t *lst_destination, list_t *lst_source); // lst_source -> null
+
+ /**
+ * @brief 
+ * @param[in] lst Pointer to the list
+ * @param[in] key 
+ * @param[in] comparator 
+ * @return 
+ */
+int list_contains(const list_t *lst, const void *key, cmp_func_t comparator);
+
+ /**
+ * @brief 
+ * @param[in] lst Pointer to the list
+ * @param[in] key 
+ * @param[in] comparator 
+ * @return 
+ */
+int list_count(const list_t *lst, const void *key, cmp_func_t comparator);
+
+ /**
+ * @brief 
+ * @param[in] lst Pointer to the list
+ * @param[in] key 
+ * @param[in] comparator 
+ * @return 
+ */
+void* list_find(const list_t *lst, const void *key, cmp_func_t comparator);
+
+/**
+ * @brief 
+ * @param[in] lst Pointer to the list
+ * @param[in] predicate 
+ * @param[in] context 
+ * @return 
+ */
+list_t* list_filter(const list_t *lst, predicate_fn predicate, void *context);
 
 #endif
