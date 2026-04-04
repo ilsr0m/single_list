@@ -1,17 +1,17 @@
 #include "list_c.h"
 
 /** @brief Структура одного узла односвязного линейного списка */
-struct node{
+struct Node{
 	void *item; ///< Указатель на данные
 	node_t *next; ///< Указатель на следующий по счету узел
 };
 
-/** @brief Структура односвязного линейного списка */
-struct list{
+/** @brief One-way linked list */
+struct OWList{
 	size_t list_size; ///< Количество элементов списка
 	size_t item_size; ///< Размер выделенной памяти для каждого элемента
-	struct node *head; ///< Указатель на первый узел списка
-	struct node *tail; ///< Указатель на последний элемент списка
+	struct Node *head; ///< Указатель на первый узел списка
+	struct Node *tail; ///< Указатель на последний элемент списка
 };
 
 /*---------------- C-like getters ----------------*/
@@ -51,7 +51,7 @@ void* list_at(const list_t *lst, const size_t index) {
 	if(!lst) return NULL;
 	if(index >= lst->list_size) return NULL;
 
-	struct node *current_node = lst->head;
+	struct Node *current_node = lst->head;
 	int count = 0;
 	while(current_node != NULL) {
 		if(index == count)
@@ -67,7 +67,7 @@ list_t* list_create(const size_t item_size) {
 	if(item_size == 0) return NULL;
 	
 	// allocate list memory 
-	struct list* lst = (list_t*)malloc(sizeof(struct list));
+	struct OWList* lst = (list_t*)malloc(sizeof(struct OWList));
 	if(!lst) return NULL;
 
 	// make list empty
@@ -82,7 +82,7 @@ list_t* list_create(const size_t item_size) {
 void list_clear(list_t *lst){
 	if(!lst) return;
 	 
-	struct node *current_node = lst->head;
+	struct Node *current_node = lst->head;
 	// clear all items
 	while(current_node) { 
 		node_t* next_node = current_node->next;
@@ -99,7 +99,7 @@ void list_delete(list_t **lst) {
 	if (!lst || !(*lst)) return;
 
 	// clean items
-	struct node *current_node = (*lst)->head;
+	struct Node *current_node = (*lst)->head;
 	while(current_node != NULL){
 		node_t* next_node = current_node->next;
 		free(current_node->item);
@@ -121,7 +121,7 @@ int list_append(list_t *lst, const void *item) {
 	if(!lst || !item) return -1;
 
 	// try to allocate memory for new node
-	struct node *new_node = (node_t*)malloc(sizeof(struct node));
+	struct Node *new_node = (node_t*)malloc(sizeof(struct Node));
 	if(!new_node) return -1;
 
 	// try to allocate memory for new item
@@ -150,7 +150,7 @@ int list_prepend(list_t *lst, const void *item) {
 	if(!lst || !item) return -1;
 
 	// try to allocate memory for new node
-	struct node *new_node = (node_t*)malloc(sizeof(struct node));
+	struct Node *new_node = (node_t*)malloc(sizeof(struct Node));
 	if(!new_node) return -1;
 
 	// try to allocate memory for new item
@@ -182,8 +182,8 @@ int list_insert(list_t *lst, const void *item, const size_t pos) {
 	if(pos > lst->list_size) return -1;
 
 	size_t count = 0;
-	struct node *current_node = lst->head;
-	struct node *previous_node = NULL;
+	struct Node *current_node = lst->head;
+	struct Node *previous_node = NULL;
 
 	while(current_node) {
 		if(count == pos) {
@@ -193,7 +193,7 @@ int list_insert(list_t *lst, const void *item, const size_t pos) {
 			}
 			else {
 				// try to allocate memory for new node
-				struct node *new_node = (node_t*)malloc(sizeof(struct node));
+				struct Node *new_node = (node_t*)malloc(sizeof(struct Node));
 				if(!new_node) return -1;
 
 				// try to allocate memory for new item
@@ -225,8 +225,8 @@ int list_insert(list_t *lst, const void *item, const size_t pos) {
 int list_remove(list_t *lst, void *key, cmp_func_t comparator) {
 	if(!lst || !key || !comparator) return -1;
 
-	struct node *current_node = lst->head;
-	struct node *previous_node = NULL, *next_node = NULL;
+	struct Node *current_node = lst->head;
+	struct Node *previous_node = NULL, *next_node = NULL;
 
 	while(current_node) {
 		next_node = current_node->next;
@@ -259,8 +259,8 @@ int list_remove_at(list_t *lst, size_t position){
 	if(!lst || position >= lst->list_size) return -1;
 
 	int count = 0;
-	struct node *current_node = lst->head;
-	struct node *previous_node = NULL, *next_node = NULL;
+	struct Node *current_node = lst->head;
+	struct Node *previous_node = NULL, *next_node = NULL;
 	
 	while(current_node) {
 		next_node = current_node->next;
@@ -294,8 +294,8 @@ int list_remove_all(list_t *lst, void *key, cmp_func_t comparator) {
 	if(!lst || !key || !comparator) return -1;
 
 	int removed_items_count = 0;
-	struct node *current_node = lst->head;
-	struct node *previous_node, *next_node;
+	struct Node *current_node = lst->head;
+	struct Node *previous_node, *next_node;
 
 	while(current_node) {
 		next_node = current_node->next;
@@ -330,7 +330,7 @@ void* list_pop_front(list_t *lst) {
 	if(!lst) return NULL;
 	if(lst->list_size == 0) return NULL;
 
-	struct node *current_node = lst->head;
+	struct Node *current_node = lst->head;
 
 	if(lst->head == lst->tail) // if only one item	
 		lst->head = lst->tail = NULL;
@@ -352,8 +352,8 @@ void* list_pop_back(list_t *lst) {
 	if(!lst) return NULL;
 	if(lst->list_size == 0) return NULL;
 
-	struct node *current_node = lst->head;
-	struct node *previous_node = NULL;
+	struct Node *current_node = lst->head;
+	struct Node *previous_node = NULL;
 
 	while(current_node) {
 		if(current_node == lst->tail) {
@@ -389,7 +389,7 @@ list_t *list_copy(const list_t *lst) {
 	list_t *copy = list_create(lst->item_size);
 	if(!copy) return NULL;
 	if(lst->list_size) {
-		struct node *current_node = lst->head;
+		struct Node *current_node = lst->head;
 		while(current_node) {
 			list_append(copy, current_node->item);
 			current_node = current_node->next;
@@ -403,7 +403,7 @@ int list_contains(const list_t *lst, const void* key, cmp_func_t comparator) {
 	if(!lst->item_size) return -1;
 
 	if(lst->list_size) {
-		struct node *current_node = lst->head;
+		struct Node *current_node = lst->head;
 		while(current_node != NULL) {
 			if(comparator(current_node->item, key) == 0)
 				return 1;
@@ -418,7 +418,7 @@ int list_count(const list_t *lst, const void *key, cmp_func_t comparator) {
 	if(!lst->item_size) return -1;
 	int count = 0;
 	if(lst->list_size) {
-		struct node *current_node = lst->head;
+		struct Node *current_node = lst->head;
 		while(current_node != NULL) {
 			if(comparator(current_node->item, key) == 0)
 				count++;
@@ -432,7 +432,7 @@ void* list_find(const list_t *lst, const void *key, cmp_func_t comparator) {
 	if(!lst || !key || !comparator) return NULL;
 	if(!lst->item_size) return NULL;
 	if(lst->list_size){
-		struct node *current_node = lst->head;
+		struct Node *current_node = lst->head;
 		while(current_node != NULL) {
 			if(comparator(current_node->item, key) == 0) {
 				return current_node->item;
@@ -450,7 +450,7 @@ list_t* list_filter(const list_t *lst, predicate_fn predicate, void* context) {
 	list_t* destination = list_create(lst->item_size);
 	if(!destination) return NULL;
 	if(lst->list_size) {
-		struct node* current_node = lst->head;
+		struct Node* current_node = lst->head;
 		while(current_node) {
 			if(predicate(current_node->item, context) == 0)
 				list_append(destination, current_node->item);
@@ -466,7 +466,7 @@ int list_trim_front(list_t* lst, const size_t n) {
 	if(!n) return 0;
 	int i;
 	for(i = 0; i < n; i++){
-		struct node *current_node = lst->head;
+		struct Node *current_node = lst->head;
 		if(lst->head == lst->tail) // if only one item
 			lst->head = lst->tail = NULL;
 		else {
@@ -486,8 +486,8 @@ int list_trim_back(list_t* lst, const size_t n) {
 	if(!n) return 0;
 
 	int trim_start = lst->list_size - n;
-	struct node* current_node = lst->head;
-	struct node* previous_node, *next_node;
+	struct Node* current_node = lst->head;
+	struct Node* previous_node, *next_node;
 	int i = 0, count = 0;
 	while(current_node) {
 		next_node = current_node->next;
@@ -531,9 +531,9 @@ int list_trim_range(list_t *lst, const size_t start, const size_t end) {
 	int count = 0;
 
 	// we must find left_node and right_node
-	struct node *left_node = NULL;
-	struct node *right_node = NULL;
-	struct node *current_node = lst->head;
+	struct Node *left_node = NULL;
+	struct Node *right_node = NULL;
+	struct Node *current_node = lst->head;
 	// node_t* previous_node = NULL;
 
 	while(current_node){
@@ -571,7 +571,7 @@ int list_set(list_t *lst, size_t index, void* item){
 	if(!lst || !item) return -1;
 	if(index >= lst->list_size) return -1;
 	
-	struct node *current_node = lst->head;
+	struct Node *current_node = lst->head;
 	int current_index = 0;
 	while (current_node)
 	{
@@ -591,7 +591,7 @@ int list_concat(list_t *lst_destination, const list_t *lst_source){
 
 	if(list_empty(lst_source)) return 0;
 	
-	struct node *source_current_node = lst_source->head;
+	struct Node *source_current_node = lst_source->head;
 	while(source_current_node) {
 		list_append(lst_destination, source_current_node->item);
 		source_current_node = source_current_node->next;
@@ -618,5 +618,80 @@ int list_splice(list_t *lst_destination, list_t *lst_source) {
 	lst_source->head = NULL;
 	lst_source->tail = NULL;
 	lst_source->list_size = 0;
+	return 0;
+}
+
+struct MergeChain {
+	struct Node *begin; 
+	struct Node *end;
+};
+
+static struct MergeChain _merge(struct Node *left, struct Node *right, cmp_func_t cmp) {
+	node_t *head = NULL, *tail = NULL;
+	// first elem 
+	if(cmp(left->item, right->item) > 0) {
+		head = right; 
+		tail = right;
+		right = right->next;
+	}
+	else {
+		head = left; 
+		tail = left;
+		left = left->next;
+	}
+
+	while(left && right){
+		if(cmp(left->item, right->item) > 0) {
+			tail->next = right;
+			right = right->next;
+		}
+		else {
+			tail->next = left;
+			left = left->next;
+		}
+		tail = tail->next;
+	}
+
+	tail->next = (right) ? right : left;
+	while (tail->next) tail = tail->next;
+
+	struct MergeChain sorted;
+	sorted.begin = head;
+	sorted.end = tail;
+	return sorted;
+};
+
+static struct MergeChain _merge_sort(struct Node *left, struct Node *right, cmp_func_t cmp) {
+
+	if(left == right) {
+		struct MergeChain both;
+		both.begin = left;
+		both.end = right;
+		return both;
+	}
+	// find middle
+	struct Node *slow = left, *fast = left, *prev = NULL;
+	while(fast && fast->next) {
+		prev = slow;
+		slow = slow->next;
+		fast = fast->next->next;
+	}
+
+	// split list
+	if(prev) prev->next = NULL;
+	struct MergeChain left_sorted = _merge_sort(left, prev, cmp);
+	struct MergeChain right_sorted = _merge_sort(slow, right, cmp);
+
+	return _merge(left_sorted.begin, right_sorted.begin, cmp);
+}
+
+int list_sort(list_t *lst, cmp_func_t cmp) {
+	if(!lst || !cmp) return -1; // error
+	// отправная точка в сортировку слиянием
+	if(lst->list_size > 1) {
+		struct MergeChain sorted = _merge_sort(lst->head, lst->tail, cmp);
+		lst->head = sorted.begin;
+		lst->tail = sorted.end;
+	}
 	return 0;
 }

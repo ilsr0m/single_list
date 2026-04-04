@@ -6,8 +6,8 @@
 #include <unistd.h>
 #include <string.h>
 
-typedef struct node node_t;
-typedef struct list list_t;
+typedef struct Node node_t;
+typedef struct OWList list_t;
 
 /**
  * @brief Функция-компаратор, предаваемая в качестве аргумента
@@ -235,5 +235,8 @@ void* list_find(const list_t *lst, const void *key, cmp_func_t comparator);
  * @return 
  */
 list_t* list_filter(const list_t *lst, predicate_fn predicate, void *context);
+
+int list_sort(list_t *lst, cmp_func_t cmp);
+
 
 #endif
