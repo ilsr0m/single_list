@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <time.h>
 
 typedef struct Node node_t;
 typedef struct OWList list_t;
@@ -16,7 +17,7 @@ typedef struct OWList list_t;
  * @return 0 - success
  * @return 1 - fail
  */
-typedef  int (*cmp_func_t)(const void *_item, const void *_key);
+typedef  int (*comparator_fn)(const void *_item, const void *_key);
 
 /**
  * @brief Функция-предикат, предаваемая в качестве аргумента
@@ -126,7 +127,7 @@ int list_insert(list_t *lst, const void *item, const size_t position);
  * @param[in] comparator Компаратор, сравнивающий ключ и текущий элемент списка. Если результат сравнения - 0, то узел будет удален
  * @return Количество удаленных элементов
  */
-int list_remove(list_t *lst, void* key, cmp_func_t comparator); 
+int list_remove(list_t *lst, void* key, comparator_fn comparator); 
 
 /**
  * @brief Remove item at set position in single-linked list
@@ -143,7 +144,7 @@ int list_remove_at(list_t *lst, size_t position);
  * @param[in] comparator Компаратор, сравнивающий ключ и текущий элемент списка. Если результат сравнения - 0, то узел будет удален
  * @return Количество удаленных элементов
  */
-int list_remove_all(list_t *lst, void* key, cmp_func_t comparator); 
+int list_remove_all(list_t *lst, void* key, comparator_fn comparator); 
 
 /**
  * @brief Функция удаления первого узла списка
@@ -207,7 +208,7 @@ int list_splice(list_t *lst_destination, list_t *lst_source); // lst_source -> n
  * @param[in] comparator 
  * @return 
  */
-int list_contains(const list_t *lst, const void *key, cmp_func_t comparator);
+int list_contains(const list_t *lst, const void *key, comparator_fn comparator);
 
  /**
  * @brief 
@@ -216,7 +217,7 @@ int list_contains(const list_t *lst, const void *key, cmp_func_t comparator);
  * @param[in] comparator 
  * @return 
  */
-int list_count(const list_t *lst, const void *key, cmp_func_t comparator);
+int list_count(const list_t *lst, const void *key, comparator_fn comparator);
 
  /**
  * @brief 
@@ -225,7 +226,7 @@ int list_count(const list_t *lst, const void *key, cmp_func_t comparator);
  * @param[in] comparator 
  * @return 
  */
-void* list_find(const list_t *lst, const void *key, cmp_func_t comparator);
+void* list_find(const list_t *lst, const void *key, comparator_fn comparator);
 
 /**
  * @brief 
@@ -236,7 +237,10 @@ void* list_find(const list_t *lst, const void *key, cmp_func_t comparator);
  */
 list_t* list_filter(const list_t *lst, predicate_fn predicate, void *context);
 
-int list_sort(list_t *lst, cmp_func_t cmp);
+int list_sort(list_t *lst, comparator_fn cmp);
 
+int list_bogosort(list_t *lst, comparator_fn cmp);
+
+int list_is_sorted(list_t *lst, comparator_fn cmp);
 
 #endif

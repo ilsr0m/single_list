@@ -222,7 +222,7 @@ int list_insert(list_t *lst, const void *item, const size_t pos) {
 	return -1;
 }
 
-int list_remove(list_t *lst, void *key, cmp_func_t comparator) {
+int list_remove(list_t *lst, void *key, comparator_fn comparator) {
 	if(!lst || !key || !comparator) return -1;
 
 	struct Node *current_node = lst->head;
@@ -290,7 +290,7 @@ int list_remove_at(list_t *lst, size_t position){
 	return 0;
 }
 
-int list_remove_all(list_t *lst, void *key, cmp_func_t comparator) {
+int list_remove_all(list_t *lst, void *key, comparator_fn comparator) {
 	if(!lst || !key || !comparator) return -1;
 
 	int removed_items_count = 0;
@@ -381,8 +381,6 @@ void* list_pop_back(list_t *lst) {
 	return NULL;
 }
 
-
-
 list_t *list_copy(const list_t *lst) {
 	if(!lst) return NULL;
 
@@ -398,7 +396,7 @@ list_t *list_copy(const list_t *lst) {
 	return copy;
 }
 
-int list_contains(const list_t *lst, const void* key, cmp_func_t comparator) {
+int list_contains(const list_t *lst, const void* key, comparator_fn comparator) {
 	if(!lst || !key || !comparator) return -1;
 	if(!lst->item_size) return -1;
 
@@ -413,7 +411,7 @@ int list_contains(const list_t *lst, const void* key, cmp_func_t comparator) {
 	return 0;
 }
 
-int list_count(const list_t *lst, const void *key, cmp_func_t comparator) {
+int list_count(const list_t *lst, const void *key, comparator_fn comparator) {
 	if(!lst || !key || !comparator) return -1;
 	if(!lst->item_size) return -1;
 	int count = 0;
@@ -428,7 +426,7 @@ int list_count(const list_t *lst, const void *key, cmp_func_t comparator) {
 	return count;
 }
 
-void* list_find(const list_t *lst, const void *key, cmp_func_t comparator) {
+void* list_find(const list_t *lst, const void *key, comparator_fn comparator) {
 	if(!lst || !key || !comparator) return NULL;
 	if(!lst->item_size) return NULL;
 	if(lst->list_size){
@@ -626,7 +624,7 @@ struct MergeChain {
 	struct Node *end;
 };
 
-static struct MergeChain _merge(struct Node *left, struct Node *right, cmp_func_t cmp) {
+static struct MergeChain _merge(struct Node *left, struct Node *right, comparator_fn cmp) {
 	node_t *head = NULL, *tail = NULL;
 	// first elem 
 	if(cmp(left->item, right->item) > 0) {
@@ -661,7 +659,7 @@ static struct MergeChain _merge(struct Node *left, struct Node *right, cmp_func_
 	return sorted;
 };
 
-static struct MergeChain _merge_sort(struct Node *left, struct Node *right, cmp_func_t cmp) {
+static struct MergeChain _merge_sort(struct Node *left, struct Node *right, comparator_fn cmp) {
 
 	if(left == right) {
 		struct MergeChain both;
@@ -685,13 +683,76 @@ static struct MergeChain _merge_sort(struct Node *left, struct Node *right, cmp_
 	return _merge(left_sorted.begin, right_sorted.begin, cmp);
 }
 
-int list_sort(list_t *lst, cmp_func_t cmp) {
+int list_sort(list_t *lst, comparator_fn cmp) {
 	if(!lst || !cmp) return -1; // error
 	// отправная точка в сортировку слиянием
 	if(lst->list_size > 1) {
 		struct MergeChain sorted = _merge_sort(lst->head, lst->tail, cmp);
 		lst->head = sorted.begin;
 		lst->tail = sorted.end;
+	}
+	return 0;
+}
+
+static void _array_shuffle(node_t** array, int n) {
+	if(n < 2) return;
+	// Init random generation
+    srand((unsigned)time(NULL));
+    for (unsigned i = n - 1; i > 0; --i) {
+
+        unsigned j = rand() % (i + 1);
+
+		node_t *tmp = array[i];
+		array[i] = array[j];
+		array[j] = tmp;
+	}
+}
+
+static void _array_to_list(node_t **array, list_t *lst) {
+	if(!lst->list_size) {
+		lst->head = NULL;
+		lst->tail = NULL;
+		return;
+	}
+
+	for(unsigned i = 0; i < lst->list_size - 1; i++)
+		array[i]->next = array[i + 1];
+	array[lst->list_size - 1]->next = NULL;
+
+	lst->head = array[0];
+	lst->tail = array[lst->list_size - 1];
+}	
+
+static node_t** _list_to_array(const list_t *lst) {
+	node_t **array = calloc(sizeof(node_t*), lst->item_size);
+	node_t *current = lst->head;
+	for(unsigned i = 0; i < lst->list_size; i++, current = current->next)
+		array[i] = current;
+	return array;
+}
+
+static void _list_shuffle(list_t *lst) {
+	node_t** array = _list_to_array(lst);
+	_array_shuffle(array, lst->list_size);
+	_array_to_list(array, lst);
+	if(array) free(array);
+}
+
+int list_is_sorted(list_t *lst, comparator_fn cmp) {
+	node_t * current = lst->head;
+	while (current && current->next) {
+		if(cmp(current->item, current->next->item) > 0)
+			return -1;
+		current = current->next;
+	}
+	return 0;
+}
+
+int list_bogosort(list_t *lst, comparator_fn cmp){
+	if(!lst || !cmp) return -1;
+	if(lst->list_size > 1) { 
+		while(list_is_sorted(lst, cmp) < 0) 
+			_list_shuffle(lst);
 	}
 	return 0;
 }

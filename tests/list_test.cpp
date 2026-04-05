@@ -1,10 +1,7 @@
-#include <gtest/gtest.h>
-#include <vector>
-#include <tuple>
-
-extern "C" {
-    #include "list_c.h"
-}
+#include "list_append.hpp"
+#include "list_prepend.hpp"
+#include "list_insert.hpp"
+#include "list_sort.hpp"
 
 class ListTest : public testing::Test {
 protected:
@@ -97,155 +94,14 @@ protected:
         return (*(int*)_item == *(int*)_key) ? 0 : -1;
     }
 
+    static int SortComparator(const void* _item, const void* _key) {
+        return (*(int*)_item > *(int*)_key) ? 0 : -1;
+    }
+
     static int Predicate(const void* _item, void* _context) {
         return (*(int*)_item > *(int*)_context) ? 0 : 1;
     }
 };
-
-// function: list_create
-TEST_F(ListTest, ListCreate) {
-    // check it with null item size
-    list_t* create = list_create(0);
-    EXPECT_EQ(create, nullptr);
-}
-
-// function: list_append -> once
-TEST_F(ListTest, AppendOnceTest) {
-    int result; // return value of funtion 
-    int value = 5;
-
-    // First of all, check if item is null
-    result = list_append(lst, nullptr);
-    EXPECT_EQ(result, -1);
-    IsEmpty();
-
-    // Check with real value
-    result = list_append(lst, &value);
-    EXPECT_EQ(result, 0);
-    IsNotEmpty();
-
-    EXPECT_EQ(list_size(lst), 1);     // plus one item
-    EXPECT_EQ(list_tail(lst), list_head(lst)); // head and tail must be equal
-    EXPECT_EQ(*(int*)list_front_item(lst), value); // item is equal to value
-    
-    Clear();
-}
-
-// function: list_prepend -> once
-TEST_F(ListTest, PrependOnceTest) {
-    int result; // return value of funtion 
-    int value = 5;
-
-    // First of all, check if item is null
-    result = list_prepend(lst, nullptr);
-    EXPECT_EQ(result, -1);
-    IsEmpty();
-
-    // Check with real value
-    result = list_prepend(lst, &value);
-    EXPECT_EQ(result, 0);
-    IsNotEmpty();
-
-    EXPECT_EQ(list_size(lst), 1);     // plus one item
-    EXPECT_EQ(list_tail(lst), list_head(lst)); // head and tail must be equal
-    EXPECT_EQ(*(int*)list_front_item(lst), value); // item is equal to value
-
-    Clear();
-}
-
-// function: list_append -> multiple times
-TEST_F(ListTest, AppendMultipleTest) {
-    int result; // return value of funtion 
-    // fill list with some values
-    FillList(list_append);
-    
-    // check each value in list
-    node_t *list_iter = list_head(lst);
-    int value_index = 0;
-    while(list_iter != nullptr){
-        EXPECT_EQ(*(int*)node_data(list_iter), test_data[value_index]);
-        list_iter = node_next(list_iter);
-        value_index++;
-    }
-
-    // check if item is null
-    result = list_append(lst, nullptr);
-    EXPECT_EQ(result, -1);
-    IsNotEmpty();
-    EXPECT_EQ(list_size(lst), 10); 
-
-    Clear();
-}
-
-// function: list_prepend -> multiple times
-TEST_F(ListTest, PrependMultipleTest){
-    int result; // return value of funtion 
-    
-    // fill list with some values
-    FillList(list_prepend);
-    
-    // check each value in list
-    node_t *list_iter = list_head(lst);
-    int value_index = 10;
-    while(list_iter != nullptr){
-        value_index--;
-        EXPECT_EQ(*(int*)node_data(list_iter), test_data[value_index]);
-        list_iter = node_next(list_iter);
-    }
-
-    // check if item is null
-    result = list_prepend(lst, nullptr);
-    EXPECT_EQ(result, -1);
-    IsNotEmpty();
-    EXPECT_EQ(list_size(lst), 10); 
-
-    Clear();
-}
-
-// function: list_insert
-TEST_F(ListTest, InsertTest){
-    int result = 0; // return value of funtion 
-
-    // check if list is null
-    int val = 4;
-    result = list_insert(nullptr, &val, 0);
-    EXPECT_EQ(result, -1); 
-
-    // check if index is out of range
-    FillList(list_append);
-    result = list_insert(nullptr, &val, 11);
-    EXPECT_EQ(result, -1);
-    IsNotEmpty();
-
-    // <value, index>
-    // insert as head item
-    std::vector<std::tuple<int, int>> test_input = {
-        { 10, 0 }, { -3, 0 }, { -1 , 0 }, { 2   , 0  }, { 8, 0  },  // insert as head item  
-        { 30, 10}, { -3, 10}, { 140, 10}, { -228, 10 }, { 3, 10 },  // insert as last item
-        { 16, 1 }, { -9, 1 }, { -8 , 1 }, { 7   , 1  }, { 5, 1  },  // put it in the middle
-        { 16, 2 }, { -9, 2 }, { -8 , 2 }, { 7   , 2  }, { 5, 2  },  // put it in the middle
-        { 16, 3 }, { -9, 3 }, { -8 , 3 }, { 7   , 3  }, { 5, 3  },  // put it in the middle
-        { 16, 4 }, { -9, 4 }, { -8 , 4 }, { 7   , 4  }, { 5, 4  },  // put it in the middle
-        { 16, 5 }, { -9, 5 }, { -8 , 5 }, { 7   , 5  }, { 5, 5  },  // put it in the middle
-        { 16, 6 }, { -9, 6 }, { -8 , 6 }, { 7   , 6  }, { 5, 6  },  // put it in the middle
-        { 16, 7 }, { -9, 7 }, { -8 , 7 }, { 7   , 7  }, { 5, 7  },  // put it in the middle
-        { 16, 8 }, { -9, 8 }, { -8 , 8 }, { 7   , 8  }, { 5, 8  },  // put it in the middle
-        { 16, 9 }, { -9, 9 }, { -8 , 9 }, { 7   , 9  }, { 5, 9  },  // put it in the middle
-    };
-
-    for(int i = 0; i < test_input.size(); i++) {
-        FillList(list_append);
-        int test_value = std::get<0>(test_input[i]);
-        int position =  std::get<1>(test_input[i]);
-        result = list_insert(lst, &test_value, position);
-        EXPECT_EQ(result, 0); 
-        IsNotEmpty();
-        EXPECT_EQ(*(int*)list_at(lst, position), test_value); 
-        EXPECT_EQ(list_size(lst), 11); 
-    }
-
-    Clear();
-}
 
 // function: list_front
 TEST_F(ListTest, FrontTest) {
@@ -588,8 +444,6 @@ TEST_F(ListTest, CopyTest){
     int val = 3; 
     list_append(lst, &val);
     copy = list_copy(lst);
-
-
 
     ListTest::IsNotEmpty(copy);
     EXPECT_NE(copy, lst);
@@ -1053,6 +907,7 @@ TEST_F(ListTest, SpliceTest){
 
     Clear();
 }
+
 
 int main(int argc, char **argv){
     ::testing::InitGoogleTest(&argc, argv);

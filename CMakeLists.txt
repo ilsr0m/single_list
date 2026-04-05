@@ -8,21 +8,25 @@ set(CMAKE_CXX_STANDARD 17)
 add_library(list_c SHARED src/list_c.c)
 target_include_directories(list_c PUBLIC include)
 
-#include(CTest)
 enable_testing()
 
 find_package(GTest REQUIRED)
 
-add_executable(great_test 
-    tests/great_test.cpp
+add_executable(list_test 
+    tests/list_test.cpp
 )
 
-target_link_libraries(great_test
+target_link_libraries(list_test
     PRIVATE
     list_c
     GTest::gtest_main
     
 )
 
+target_include_directories(list_test
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/include
+)
+
 include(GoogleTest)
-gtest_discover_tests(great_test)
+gtest_discover_tests(list_test)
