@@ -1,19 +1,21 @@
-#include "list_c.h"
+#include "single_list.h"
 
-/** @brief Структура одного узла односвязного линейного списка */
+/** 
+ * @brief Node structure for single-linked list container.
+ */
 struct SingleNode {
-	void *item; ///< Указатель на данные
-	snode_t *next; ///< Указатель на следующий по счету узел
+	void *item; 	/**< Pointer to node data. */ 
+	snode_t *next; 	/**< Pointer to next node. */ 
 };
 
 /** 
- * @brief Single-linked list container
+ * @brief Single-linked list container.
  */
 struct SingleList {
-	size_t list_size; 		 /**< */ 
-	size_t item_size; 		 /**< */ 
-	struct SingleNode *head; /**< */ 
-	struct SingleNode *tail; /**< */ 
+	size_t list_size; 		 /**< Number of elements in list. */
+	size_t item_size; 		 /**< Byte size of element. */
+	struct SingleNode *head; /**< Pointer to first node. */
+	struct SingleNode *tail; /**< Pointer to last node. */
 };
 
 slist_t* slist_create(const size_t item_size) {
