@@ -23,20 +23,20 @@ class ListInsertTest : public ListBaseTest<TestInsertValues> {};
 TEST_P(ListInsertTest, ListInsert) {
     TestInsertValues testValues = GetParam();
     if(testValues.isListNull && testValues.isItemNull) {
-        EXPECT_EQ(list_insert(nullptr, nullptr, testValues.position), testValues.result);
+        EXPECT_EQ(slist_insert(nullptr, nullptr, testValues.position), testValues.result);
         return;
     }
     if(testValues.isListNull) {
-        EXPECT_EQ(list_insert(nullptr, &testValues.item, testValues.position), testValues.result);
+        EXPECT_EQ(slist_insert(nullptr, &testValues.item, testValues.position), testValues.result);
         return;
     }
     if(testValues.isItemNull) {
-        EXPECT_EQ(list_insert(lst, nullptr, testValues.position), testValues.result);
+        EXPECT_EQ(slist_insert(lst, nullptr, testValues.position), testValues.result);
         return;
     }
 
     FillList(testValues.baseValues);
-    int result = list_insert(lst, &testValues.item, testValues.position);
+    int result = slist_insert(lst, &testValues.item, testValues.position);
     if(testValues.position > testValues.baseValues.size()) {
         EXPECT_EQ(result, -1);
         CompareWith(testValues.baseValues);
@@ -45,7 +45,7 @@ TEST_P(ListInsertTest, ListInsert) {
         EXPECT_EQ(result, 0);
         CompareWith(testValues.targetValues);
     }
-    ListClear();
+    ClearList();
 };
 
 INSTANTIATE_TEST_SUITE_P(TestSuiteListInsert, ListInsertTest, ::testing::Values(

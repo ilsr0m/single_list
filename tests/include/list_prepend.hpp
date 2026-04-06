@@ -6,20 +6,20 @@
 class ListPrependTest : public ListAppendTest {
 public:
     void CompareWith(std::vector<int> vec) override {
-        if(list_empty(lst)) { 
+        if(slist_empty(lst)) { 
             IsEmpty(); 
             return; 
         }
         IsNotEmpty();
-        EXPECT_EQ(list_size(lst), vec.size());
+        EXPECT_EQ(slist_size(lst), vec.size());
         // Tail must be equal to the first vector's item
-        EXPECT_EQ(*(int*)node_data(list_tail(lst)), vec[0]);
+        EXPECT_EQ(*(int*)snode_data(slist_tail(lst)), vec[0]);
         // Head must be equal to the last vector's item
-        EXPECT_EQ(*(int*)node_data(list_head(lst)), vec[vec.size() - 1]);
+        EXPECT_EQ(*(int*)snode_data(slist_head(lst)), vec[vec.size() - 1]);
         // Compare each list's item and vector's item
-        node_t *current = list_head(lst);
-        for(unsigned i = vec.size() - 1; i != 0; i--, current = node_next(current)) 
-            EXPECT_EQ(*(int*)node_data(current), vec[i]);
+        snode_t *current = slist_head(lst);
+        for(unsigned i = vec.size() - 1; i != 0; i--, current = snode_next(current)) 
+            EXPECT_EQ(*(int*)snode_data(current), vec[i]);
     };    
 };
 
@@ -28,27 +28,27 @@ TEST_P(ListPrependTest, ListPrepend) {
 
     // invalid case
     if(testValues.isListNull && testValues.isItemNull) {
-        EXPECT_EQ(list_prepend(nullptr, nullptr), testValues.result);
+        EXPECT_EQ(slist_prepend(nullptr, nullptr), testValues.result);
         return;
     }
     // invalid case
     if(testValues.isItemNull) {
-        EXPECT_EQ(list_prepend(lst, nullptr), testValues.result);
+        EXPECT_EQ(slist_prepend(lst, nullptr), testValues.result);
         return;
     }
     // invalid case
     if(testValues.isListNull) {
         for(auto v : testValues.values) 
-            EXPECT_EQ(list_prepend(nullptr, &v), testValues.result);
+            EXPECT_EQ(slist_prepend(nullptr, &v), testValues.result);
         return;    
     }
 
     if(testValues.values.size()){
         // Append all vector's values one by one
         for(auto v : testValues.values)
-            EXPECT_EQ(list_prepend(lst, &v), testValues.result);
+            EXPECT_EQ(slist_prepend(lst, &v), testValues.result);
         CompareWith(testValues.values);
-        ListClear();
+        ClearList();
         return;
     }
     IsEmpty();

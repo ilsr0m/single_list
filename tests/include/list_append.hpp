@@ -20,27 +20,27 @@ TEST_P(ListAppendTest, ListAppend) {
 
     // invalid case
     if(testValues.isListNull || testValues.isItemNull) {
-        EXPECT_EQ(list_append(nullptr, nullptr), testValues.result);
+        EXPECT_EQ(slist_append(nullptr, nullptr), testValues.result);
         return;
     }
     // invalid case
     if(testValues.isItemNull) {
-        EXPECT_EQ(list_append(lst, nullptr), testValues.result);
+        EXPECT_EQ(slist_append(lst, nullptr), testValues.result);
         return;
     }
     // invalid case
     if(testValues.isListNull) {
         for(auto v : testValues.values) 
-            EXPECT_EQ(list_append(nullptr, &v), testValues.result);
+            EXPECT_EQ(slist_append(nullptr, &v), testValues.result);
         return;    
     }
 
     if(testValues.values.size()){
         // Append all vector's values one by one
         for(auto v : testValues.values)
-            EXPECT_EQ(list_append(lst, &v), testValues.result);
+            EXPECT_EQ(slist_append(lst, &v), testValues.result);
         CompareWith(testValues.values);
-        ListClear();
+        ClearList();
         return;
     }
     IsEmpty();

@@ -39,20 +39,20 @@ TEST_P(ListSortTest, ListSort) {
     TestSortValues testValues = GetParam();
     
     if(testValues.isListNull){
-        EXPECT_EQ(list_sort(nullptr, testValues.comparator), testValues.result);
+        EXPECT_EQ(slist_sort(nullptr, testValues.comparator), testValues.result);
         return;
     }
     
     FillList(testValues.sortedValues);
-    EXPECT_EQ(list_sort(lst, testValues.comparator), testValues.result);
+    EXPECT_EQ(slist_sort(lst, testValues.comparator), testValues.result);
 
     if(testValues.result == 0) {
-        EXPECT_EQ(list_size(lst), testValues.unsortedValues.size());
-        EXPECT_EQ(list_size(lst), testValues.sortedValues.size());
-        if(!list_size(lst)) IsEmpty();
+        EXPECT_EQ(slist_size(lst), testValues.unsortedValues.size());
+        EXPECT_EQ(slist_size(lst), testValues.sortedValues.size());
+        if(!slist_size(lst)) IsEmpty();
         else CompareWith(testValues.sortedValues);
     }
-    ListClear();
+    ClearList();
 };
 
 INSTANTIATE_TEST_SUITE_P(TestSuiteListSort, ListSortTest, ::testing::Values(
