@@ -11,6 +11,7 @@
 #include "slist_remove_all.hpp"
 
 #include "slist_trim_front.hpp"
+#include "slist_trim_back.hpp"
 
 int main(int argc, char **argv){
     ::testing::InitGoogleTest(&argc, argv);
