@@ -31,7 +31,7 @@ slist_t* slist_create(const size_t item_size) {
 	return lst;
 }
 
-void slist_clear(slist_t *lst){
+void slist_clear(slist_t *lst) { 
 	if(!lst) return;
 	struct SingleNode *current_node = lst->head;
 	// clear all items
@@ -490,8 +490,9 @@ slist_t *slist_copy(const slist_t *lst) {
 
 int slist_concat(slist_t *lst_destination, const slist_t *lst_source){
 	if(!lst_source || !lst_destination) return -1;
+	if(lst_destination->item_size != lst_source->item_size) return -1;
 	if(lst_destination == lst_source) return -1;
-
+	
 	if(slist_empty(lst_source)) return 0;
 	
 	struct SingleNode *source_current_node = lst_source->head;
@@ -557,7 +558,7 @@ int slist_count(const slist_t *lst, const void *key, comparator_fn comparator) {
 void* slist_find(const slist_t *lst, const void *key, comparator_fn comparator) {
 	if(!lst || !key || !comparator) return NULL;
 	if(!lst->item_size) return NULL;
-	if(lst->list_size){
+	if(lst->list_size) {
 		struct SingleNode *current_node = lst->head;
 		while(current_node != NULL) {
 			if(comparator(current_node->item, key) == 0) {
