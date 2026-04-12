@@ -25,7 +25,7 @@ typedef struct SingleList slist_t;
 * @param[in] item Pointer to element.
 * @param[in] key Pointer to key value.
 *
-* @return Positive value if item < key.
+* @return Positive value if item > key.
 * @return Zero value if both are equal.
 * @return Negative value if item < key.
 */
