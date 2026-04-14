@@ -449,15 +449,19 @@ int slist_trim_range(slist_t *lst, const size_t start, const size_t end) {
 		}
 
 		if(left_node){
+			struct SingleNode *next_node = current_node->next;
 			// remove item
 			free(current_node->item);
 			free(current_node);
+
+			current_node = next_node;
+			count++;
+			continue;
 		}
 		else if(count == start - 1)
 			left_node = current_node;
 
 		count++;
-		// previous_node = current_node;
 		current_node = current_node->next;
 	}
 
