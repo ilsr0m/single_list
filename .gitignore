@@ -1,4 +1,5 @@
 /build/
+/build-bash/
 /out/
 /bin/
 *.o
