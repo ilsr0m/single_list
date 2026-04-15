@@ -38,3 +38,32 @@ It includes common list operations, searching, filtering, and sorting algorithms
 #### Windows
 - MSVC (UCRT toolset recommended)
 - Use `build.ps1`
+
+> Git Bash on Windows does not use MSVC by default.  
+> Use PowerShell for MSVC builds.
+
+#### Linux
+- GCC or Clang
+- Use build.sh
+
+---
+## Repository Structure
+
+```text
+singly-linked-list/
+├── CMakeLists.txt # 
+├── README.md
+├── LICENSE
+├── include/
+│   └── single_list.h
+├── src/
+│   └── single_list.c
+├── tests/
+│   └── ...
+├── scripts/
+│   ├── build.sh
+│   └── build.ps1
+└── docs/
+```
+
+---

@@ -11,7 +11,7 @@ add_library(single_list STATIC
 
 target_include_directories(single_list
     PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/include   
+        ${CMAKE_CURRENT_SOURCE_DIR}/include 
 )
 
 enable_testing() # CTest support
