@@ -51,16 +51,16 @@ It includes common list operations, searching, filtering, and sorting algorithms
 
 ```text
 singly-linked-list/
-├── CMakeLists.txt # 
+├── CMakeLists.txt 
 ├── README.md
 ├── LICENSE
 ├── include/
 │   └── single_list.h
-├── src/
+├── src/ 
 │   └── single_list.c
-├── tests/
+├── tests/ 
 │   └── ...
-├── scripts/
+├── scripts/ 
 │   ├── build.sh
 │   └── build.ps1
 └── docs/
