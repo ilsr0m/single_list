@@ -360,7 +360,7 @@ slist_t* slist_filter(const slist_t *lst, predicate_fn predicate, const void *co
  * @return 0 if list is not sorted.
  * @return -1 on failure.
  */
-int slist_is_sorted(slist_t *lst, comparator_fn comparator);
+int slist_is_sorted(const slist_t *lst, comparator_fn comparator);
 
 /**
  * @brief Sorts list using comparator.
@@ -383,7 +383,7 @@ int slist_sort(slist_t *lst, comparator_fn comparator);
  * @return -1 on failure.
  * 
  * @warning Extremely inefficient algorithm.
- * Average time complexity is unbounded (0(n!)).
+ * Average time complexity is unbounded @f \f$ (O(n \cdot n!)) \f$.
  * Intended for testing or educational purposes only.
  */
 int slist_bogosort(slist_t *lst, comparator_fn comparator);

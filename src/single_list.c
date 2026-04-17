@@ -591,7 +591,7 @@ slist_t* slist_filter(const slist_t *lst, predicate_fn predicate, const void* co
 	return destination;
 }
 
-int slist_is_sorted(slist_t *lst, comparator_fn comparator) {
+int slist_is_sorted(const slist_t *lst, comparator_fn comparator) {
 	if(!lst || !comparator) return -1;
 	if(lst->list_size < 2) return 1;
 	snode_t * current = lst->head;
