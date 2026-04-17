@@ -123,7 +123,7 @@ int slist_prepend(slist_t *lst, const void *item);
 int slist_insert(slist_t *lst, const void *item, const size_t position);
 
 /**
- * @brief Sets elements at index.
+ * @brief Sets element at index.
  * 
  * Replaces element at specified position with new value.
  * 
@@ -196,7 +196,7 @@ int slist_remove_all(slist_t *lst, const void* key, comparator_fn comparator);
 *
 * @param[in,out] lst Pointer to list.
 *
-* @return Pointer to removed element copy
+* @return Pointer to removed element copy. 
 * @return NULL if list is NULL or empty.
 */
 void* slist_pop_front(slist_t *lst);
