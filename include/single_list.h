@@ -270,7 +270,7 @@ slist_t *slist_copy(const slist_t *lst);
  * Copies all elements from source list and 
  * appends them in destination list.
  * 
- * @param [in,out] lst_destination Pointer to destintation list.
+ * @param [in,out] lst_destination Pointer to destination list.
  * @param [in] lst_source Pointer to source list.
  * 
  * @return 0 on success.
@@ -284,7 +284,7 @@ int slist_concat(slist_t *lst_destination, const slist_t *lst_source);
  * Transfers all nodes from source list to end of destination list.
  * Source list becomes empty after call.
  * 
- * @param [in,out] lst_destination Pointer to destintation list.
+ * @param [in,out] lst_destination Pointer to destination list.
  * @param [in,out] lst_source Pointer to source list.
  * 
  * @return 0 on success.
@@ -353,8 +353,8 @@ slist_t* slist_filter(const slist_t *lst, predicate_fn predicate, const void *co
 /**
  * @brief Checks if list is sorted.
  * 
- * @param [in] lst Pointer to list.
- * @param [in] comparator Comparator function.
+ * @param[in] lst Pointer to list.
+ * @param[in] comparator Comparator function.
  * 
  * @return 1 if list is sorted.
  * @return 0 if list is not sorted.
@@ -365,8 +365,8 @@ int slist_is_sorted(slist_t *lst, comparator_fn comparator);
 /**
  * @brief Sorts list using comparator.
  * 
- * @param [in,out] lst Pointer to list.
- * @param [in] comparator Comparator function.
+ * @param[in,out] lst Pointer to list.
+ * @param[in] comparator Comparator function.
  * 
  * @return 0 on success.
  * @return -1 on failure.
@@ -376,8 +376,8 @@ int slist_sort(slist_t *lst, comparator_fn comparator);
 /**
  * @brief Sorts list using bogosort algorithm.
  * 
- * @param [in,out] lst Pointer to list.
- * @param [in] comparator Comparator function.
+ * @param[in,out] lst Pointer to list.
+ * @param[in] comparator Comparator function.
  * 
  * @return 0 on success.
  * @return -1 on failure.
@@ -391,7 +391,7 @@ int slist_bogosort(slist_t *lst, comparator_fn comparator);
 /**
  * @brief Returns pointer to first node.
  * 
- * @param [in] lst Pointer to list.
+ * @param[in] lst Pointer to list.
  * 
  * @return Pointer to head node.
  * @return NULL if @p lst is NULL or empty.
@@ -401,7 +401,7 @@ snode_t* slist_head(const slist_t *lst);
 /**
  * @brief Returns pointer to last node.
  * 
- * @param [in] lst Pointer to list.
+ * @param[in] lst Pointer to list.
  * 
  * @return Pointer to tail node.
  * @return NULL if @p lst is NULL or empty.
@@ -411,7 +411,7 @@ snode_t* slist_tail(const slist_t *lst);
 /**
  * @brief Returns pointer to next node.
  * 
- * @param [in] nod Pointer to node.
+ * @param[in] nod Pointer to node.
  * 
  * @return Pointer to next node.
  * @return NULL if @p nod is NULL or last node.
@@ -421,7 +421,7 @@ snode_t *snode_next(const snode_t *nod);
 /**
  * @brief Returns pointer to node data.
  * 
- * @param [in] nod Pointer to node
+ * @param[in] nod Pointer to node
  * 
  * @return Pointer to stored data.
  * @return NULL if @p nod is NULL
@@ -431,7 +431,7 @@ void* snode_data(const snode_t *nod);
 /**
  * @brief Returns number of stored elements in list.
  * 
- * @param [in] lst Pointer to list.
+ * @param[in] lst Pointer to list.
  * 
  * @return Number of elements in list.
  * @return 0 if @p lst is NULL.
@@ -441,7 +441,7 @@ size_t slist_size(const slist_t *lst);
 /**
  * @brief Returns size of stored element.
  * 
- * @param [in] lst Pointer to list.
+ * @param[in] lst Pointer to list.
  * 
  * @return Size of element in bytes.
  * @return 0 if @p lst is NULL.
@@ -451,7 +451,7 @@ size_t slist_item_size(const slist_t *lst);
 /**
  * @brief Returns first element in list.
  * 
- * @param [in] lst Pointer to list.
+ * @param[in] lst Pointer to list.
  * 
  * @return Pointer to first element.
  * @return NULL if list is NULL or empty.
@@ -461,7 +461,7 @@ void* slist_front_item(const slist_t *lst);
 /**
  * @brief Returns last element in list.
  * 
- * @param [in] lst Pointer to list.
+ * @param[in] lst Pointer to list.
  * 
  * @return Pointer to last element.
  * @return NULL if list is NULL or empty.
