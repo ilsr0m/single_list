@@ -311,9 +311,9 @@ int slist_remove_all(slist_t *lst, const void *key, comparator_fn comparator) {
 	return removed_items_count;
 }
 
-void* slist_pop_front(slist_t *lst) {
-	if(!lst) return NULL;
-	if(lst->list_size == 0) return NULL;
+int slist_pop_front(slist_t *lst) {
+	if(!lst) return -1;
+	if(lst->list_size == 0) return -1;
 
 	struct SingleNode *current_node = lst->head;
 
@@ -324,18 +324,18 @@ void* slist_pop_front(slist_t *lst) {
 		lst->head = next_node;
 	}
 
-	void* item = malloc(lst->item_size);
-	memcpy(item, current_node->item, lst->item_size);
+	// void* item = malloc(lst->item_size);
+	// memcpy(item, current_node->item, lst->item_size);
 
 	free(current_node->item);
 	free(current_node);
 	lst->list_size -= 1;
-	return item;
+	return 0;
 }
 
-void* slist_pop_back(slist_t *lst) {
-	if(!lst) return NULL;
-	if(lst->list_size == 0) return NULL;
+int slist_pop_back(slist_t *lst) {
+	if(!lst) return -1;
+	if(lst->list_size == 0) return -1;
 
 	struct SingleNode *current_node = lst->head;
 	struct SingleNode *previous_node = NULL;
@@ -350,20 +350,20 @@ void* slist_pop_back(slist_t *lst) {
 				if(previous_node) previous_node->next = NULL; // prev is new tail node
 			}
 			
-			void* item = malloc(lst->item_size);
-			memcpy(item, current_node->item, lst->item_size);
+			// void* item = malloc(lst->item_size);
+			// memcpy(item, current_node->item, lst->item_size);
 
 			free(current_node->item);
 			free(current_node);
 
 			lst->list_size -= 1;
-			return item;
+			return 0;
 		}
 
 		previous_node = current_node;
 		current_node = current_node->next;
 	}
-	return NULL;
+	return -1;
 }
 
 int slist_trim_front(slist_t* lst, const size_t n) {

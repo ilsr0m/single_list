@@ -196,10 +196,10 @@ int slist_remove_all(slist_t *lst, const void* key, comparator_fn comparator);
 *
 * @param[in,out] lst Pointer to list.
 *
-* @return Pointer to removed element copy. 
-* @return NULL if list is NULL or empty.
+* @return 0 on success. 
+* @return -1 on failure. 
 */
-void* slist_pop_front(slist_t *lst);
+int slist_pop_front(slist_t *lst);
 
 /**
 * @brief Removes the last element from list.
@@ -208,10 +208,10 @@ void* slist_pop_front(slist_t *lst);
 *
 * @param[in,out] lst Pointer to list.
 *
-* @return Pointer to removed element copy.
-* @return NULL if list is NULL or empty.
+* @return 0 on success. 
+* @return -1 on failure. 
 */
-void* slist_pop_back(slist_t *lst); 
+int slist_pop_back(slist_t *lst); 
 
 /**
 * @brief Removes the first @p n elements from list.
